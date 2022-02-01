@@ -3,8 +3,7 @@ const url = "http://localhost:3000/api/products";
 
 
 fetch(url).then(response => response.json()).then(data => {
-    console.log(data)
-    console.log(data[0].price)
+
     for (let item of data) {
         let newItem = `<a href="./product.html?id=${item._id}">
     <article>
@@ -13,10 +12,11 @@ fetch(url).then(response => response.json()).then(data => {
     <p class="productDescription">${item.description}</p>
     </article>
     </a>`;
-        console.log(newItem);
+
         let items = document.getElementById("items");
         items.innerHTML += newItem;
     }
 
 });
 
+// Ne pas oublier catch / try si il y a un souci avec le serveur ou si c'est vide
