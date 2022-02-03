@@ -1,6 +1,9 @@
+let basket = localStorage.getItem("product");
+let displayBasket = JSON.parse(basket);
+
 // On récupère le panier depuis le localStorage
 async function getBasket() {
-  let basket = localStorage.getItem("product");
+
   // Si il est vide, on affichage que le panier est vide
   if (basket == null) {
     let items = document.getElementById("cart__items");
@@ -8,23 +11,16 @@ async function getBasket() {
   }
   // Sinon, on boucle les produits dans le panier et on les affiche
   else {
-    let displayBasket = JSON.parse(basket);
     for (product of displayBasket) {
-      let reponse = await fetch(`http://localhost:3000/api/products/${product.id}`);
-      // On vérifie que la connexion avec l'API est ok
-      if (reponse.ok) {
-        let data = await reponse.json();
-        console.log(data);
-
-        let newItem = `<article class="cart__item" data-id="${product.id}" data-color="${product.color}">
+      let newItem = `<article class="cart__item" data-id="${product.id}" data-color="${product.color}">
               <div class="cart__item__img">
-                <img src="${data.imageUrl}" alt="${data.altTxt}">
+                ${product.img}
               </div>
               <div class="cart__item__content">
                 <div class="cart__item__content__description">
-                  <h2>${data.name}</h2>
+                  <h2>${product.name}</h2>
                   <p>${product.color}</p>
-                  <p>${data.price}€</p>
+                  <p>${product.price}€</p>
                 </div>
                 <div class="cart__item__content__settings">
                   <div class="cart__item__content__settings__quantity">
@@ -37,20 +33,40 @@ async function getBasket() {
                 </div>
               </div>
             </article>`;
-        console.log(newItem);
-        let items = document.getElementById("cart__items");
-        items.innerHTML += newItem;
-
-      }
+      let items = document.getElementById("cart__items");
+      items.innerHTML += newItem;
       // Sinon on indique qu'il y a un problème de communication avec l'API
-      else {
-        let items = document.getElementById("items");
-        items.innerHTML = "<h3>Désolé, il y a une erreur de communication avec l'API, veuillez rééssayer plus tard</h3>";
-      }
     }
   }
+  getTotal();
 };
 getBasket();
+
+// Calcul de la quantité totale et du prix total
+function getTotal() {
+  // Calcul de la quantité de produits
+  var quantityProduct = document.getElementsByClassName("itemQuantity");
+  totalQuantity = 0;
+
+  for (var i = 0; i < quantityProduct.length; ++i) {
+    totalQuantity += quantityProduct[i].valueAsNumber;
+  }
+  // On modifie le DOM
+  let productTotalQuantity = document.getElementById('totalQuantity');
+  productTotalQuantity.innerHTML = totalQuantity;
+
+  // Calcul du prix total
+  totalPrice = 0;
+
+  for (var i = 0; i < quantityProduct.length; ++i) {
+    totalPrice += (quantityProduct[i].valueAsNumber * displayBasket[i].price);
+  }
+  // On modifie le DOM
+  let productTotalPrice = document.getElementById('totalPrice');
+  productTotalPrice.innerHTML = totalPrice;
+}
+
+
 
 // On affiche la quantité de produits dans le panier dans la navigation
 let basketQuantity = JSON.parse(localStorage.getItem("product"));
