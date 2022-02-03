@@ -1,9 +1,8 @@
+// On récupère le panier depuis le localStorage
 let basket = localStorage.getItem("product");
 let displayBasket = JSON.parse(basket);
 
-// On récupère le panier depuis le localStorage
-async function getBasket() {
-
+function getBasket() {
   // Si il est vide, on affichage que le panier est vide
   if (basket == null) {
     let items = document.getElementById("cart__items");
@@ -35,7 +34,6 @@ async function getBasket() {
             </article>`;
       let items = document.getElementById("cart__items");
       items.innerHTML += newItem;
-      // Sinon on indique qu'il y a un problème de communication avec l'API
     }
   }
   getTotal();
@@ -101,19 +99,19 @@ function deleteProduct() {
       let productIdDelete = displayBasket[k].id;
       let productcolorDelete = displayBasket[k].color
       // On demande confirmation à l'utilisateur
-      confirm(`Etes vous sûrs de vouloir retirer le ${displayBasket[k].name} du panier ?`);
-      // On récupère le panier sans l'élément à supprimer
-      displayBasket = displayBasket.filter(product => product.id != productIdDelete || product.color != productcolorDelete);
-      // On met à jour le panier dans le localStorage
-      localStorage.setItem("product", JSON.stringify(displayBasket));
-      // On rafraichit
-      location.reload();
-      // On informe l'utilisateur de la bonne réalisation
-      alert(`Le produit a bien été supprimé du panier`);
+      if (confirm(`Etes vous sûrs de vouloir retirer le ${displayBasket[k].name} du panier ?`)) {
+        // On récupère le panier sans l'élément à supprimer
+        displayBasket = displayBasket.filter(product => product.id != productIdDelete || product.color != productcolorDelete);
+        // On met à jour le panier dans le localStorage
+        localStorage.setItem("product", JSON.stringify(displayBasket));
+        // On rafraichit
+        location.reload();
+        // On informe l'utilisateur de la bonne réalisation
+        alert(`Le produit a bien été supprimé du panier`);
+      }
     })
   }
 }
-
 deleteProduct();
 
 // On affiche la quantité de produits dans le panier dans la navigation
