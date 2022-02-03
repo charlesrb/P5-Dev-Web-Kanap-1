@@ -29,7 +29,6 @@ async function getProducts() {
         document.getElementById("title").innerHTML = data.name;
         document.getElementById("price").innerHTML = data.price;
         document.getElementById("description").innerHTML = data.description;
-
         for (color of data.colors) {
             document.getElementById("colors").innerHTML += `<option value="${color}">${color}</option>`;
         }
@@ -113,3 +112,6 @@ document.getElementById("addToCart").addEventListener('click', result => {
 });
 
 
+// On affiche la quantité de produits dans le panier dans la navigation
+let basketQuantity = JSON.parse(localStorage.getItem("product"));
+document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
