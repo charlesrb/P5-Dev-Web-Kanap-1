@@ -70,6 +70,7 @@ function addBasket(product) {
     if (foundProduct != undefined) {
         let newQuantity = parseInt(foundProduct.quantity) + parseInt(product.quantity);
         foundProduct.quantity = newQuantity;
+        location.reload();
         window.confirm(`Votre panier a été mis à jour de ${quantity} ${title.textContent} ${color}`);
 
     }
@@ -77,6 +78,7 @@ function addBasket(product) {
     else {
         product.quantity = quantity;
         basket.push(product);
+        location.reload();
         window.confirm(`Votre commande de ${quantity} ${title.textContent} ${color} est ajoutée au panier`);
     }
     saveBasket(basket);

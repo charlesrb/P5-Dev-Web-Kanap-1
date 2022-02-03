@@ -39,6 +39,8 @@ async function getBasket() {
     }
   }
   getTotal();
+
+
 };
 getBasket();
 
@@ -48,7 +50,7 @@ function getTotal() {
   var quantityProduct = document.getElementsByClassName("itemQuantity");
   totalQuantity = 0;
 
-  for (var i = 0; i < quantityProduct.length; ++i) {
+  for (let i = 0; i < quantityProduct.length; ++i) {
     totalQuantity += quantityProduct[i].valueAsNumber;
   }
   // On modifie le DOM
@@ -58,7 +60,7 @@ function getTotal() {
   // Calcul du prix total
   totalPrice = 0;
 
-  for (var i = 0; i < quantityProduct.length; ++i) {
+  for (let i = 0; i < quantityProduct.length; ++i) {
     totalPrice += (quantityProduct[i].valueAsNumber * displayBasket[i].price);
   }
   // On modifie le DOM
@@ -66,7 +68,53 @@ function getTotal() {
   productTotalPrice.innerHTML = totalPrice;
 }
 
+// Fonction pour modifier la quantité des produits dans le panier
+function modifyQuantity() {
+  let changeQuantity = document.querySelectorAll(".itemQuantity");
 
+  // Boucle sur tous les produits qui existent
+  for (let j = 0; j < changeQuantity.length; j++) {
+    // On "écoute" les changements
+    changeQuantity[j].addEventListener('change', result => {
+      result.preventDefault();
+      // on modifie la quantité et on l'ajoute au localStorage
+      let newQuantity = parseInt(changeQuantity[j].valueAsNumber);
+      displayBasket[j].quantity = newQuantity;
+      localStorage.setItem("product", JSON.stringify(displayBasket));
+
+      // Refresh pour mettre à jour quantité total et prix total
+      location.reload();
+
+    });
+  };
+}
+modifyQuantity();
+
+// Fonction pour supprimer un produit du panier
+function deleteProduct() {
+  let deleteBtn = document.querySelectorAll(".deleteItem");
+
+  for (let k = 0; k < deleteBtn.length; k++) {
+    deleteBtn[k].addEventListener('click', result => {
+      result.preventDefault();
+      // On récupère l'id et la couleur du produit à supprimer
+      let productIdDelete = displayBasket[k].id;
+      let productcolorDelete = displayBasket[k].color
+      // On demande confirmation à l'utilisateur
+      confirm(`Etes vous sûrs de vouloir retirer le ${displayBasket[k].name} du panier ?`);
+      // On récupère le panier sans l'élément à supprimer
+      displayBasket = displayBasket.filter(product => product.id != productIdDelete || product.color != productcolorDelete);
+      // On met à jour le panier dans le localStorage
+      localStorage.setItem("product", JSON.stringify(displayBasket));
+      // On rafraichit
+      location.reload();
+      // On informe l'utilisateur de la bonne réalisation
+      alert(`Le produit a bien été supprimé du panier`);
+    })
+  }
+}
+
+deleteProduct();
 
 // On affiche la quantité de produits dans le panier dans la navigation
 let basketQuantity = JSON.parse(localStorage.getItem("product"));
