@@ -37,8 +37,6 @@ function getBasket() {
     }
   }
   getTotal();
-
-
 };
 getBasket();
 
@@ -113,6 +111,87 @@ function deleteProduct() {
   }
 }
 deleteProduct();
+
+function getForm() {
+  // Selection du formulaire
+  let form = document.querySelector('.cart__order__form');
+  // RegExp pour les champs du formulaire
+  let nameRegExp = new RegExp("^[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*$");
+  let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
+  let mailRegExp = new RegExp("[-a-zA-Zàâäéèêëïîôöùûüç]+@[a-z0-9.-]+\.[a-z]{2,}$");
+
+  // Ecoute des différents champs et validation de ceux-ci
+  form.firstName.addEventListener('change', function () {
+    validationName(this);
+  });
+
+  form.lastName.addEventListener('change', function () {
+    validationLastName(this);
+  });
+
+  form.address.addEventListener('change', function () {
+    validationAddress(this);
+  });
+
+  form.city.addEventListener('change', function () {
+    validationCity(this);
+  });
+
+  form.email.addEventListener('change', function () {
+    validationEmail(this);
+  });
+
+  // Validation firstName
+  const validationName = (firstName) => {
+    let firstNameErrorMsg = firstName.nextElementSibling;
+    if (nameRegExp.test(firstName.value)) {
+      firstNameErrorMsg.innerHTML = '';
+    }
+    else if (!nameRegExp.test(firstName.value)) {
+      firstNameErrorMsg.innerHTML = 'Des caractères saisis ne sont pas autorisés';
+    }
+  }
+
+  // Validation lastName
+  const validationLastName = (lastName) => {
+    let lastNameErrorMsg = lastName.nextElementSibling;
+    if (nameRegExp.test(lastName.value)) {
+      lastNameErrorMsg.innerHTML = '';
+    }
+    else {
+      lastNameErrorMsg.innerHTML = 'Des caractères saisis ne sont pas autorisés';
+    }
+  }
+
+  // Validation adresse
+  const validationAddress = (address) => {
+    let addressErrorMsg = address.nextElementSibling;
+    if (!addressRegExp.test(address.value)) {
+      addressErrorMsg.innerHTML = 'Merci de saisir une adresse valide';
+    }
+  }
+
+  // Validation ville
+  const validationCity = (city) => {
+    let cityErrorMsg = city.nextElementSibling;
+    if (nameRegExp.test(city.value)) {
+      cityErrorMsg.innerHTML = '';
+    }
+    else {
+      cityErrorMsg.innerHTML = 'Des caractères saisis ne sont pas autorisés';
+    }
+  }
+
+  // Validation mail
+  const validationEmail = (email) => {
+    let emailErrorMsg = email.nextElementSibling;
+    if (!mailRegExp.test(email.value)) {
+      emailErrorMsg.innerHTML = 'Merci de saisir une adresse email valide';
+    }
+  }
+}
+getForm();
+
 
 // On affiche la quantité de produits dans le panier dans la navigation
 let basketQuantity = JSON.parse(localStorage.getItem("product"));
