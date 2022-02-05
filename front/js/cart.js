@@ -111,129 +111,87 @@ function deleteProduct() {
 }
 deleteProduct();
 
-function getForm() {
-  // Selection du formulaire
-  let form = document.querySelector('.cart__order__form');
-  // RegExp pour les champs du formulaire
+// Fonction validation des champs de formulaire
+const validationForm = () => {
   let nameRegExp = new RegExp("^[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*$");
   let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
   let mailRegExp = new RegExp("[-a-zA-Zàâäéèêëïîôöùûüç]+@[a-z0-9.-]+\.[a-z]{2,}$");
 
-  // Ecoute des différents champs et validation de ceux-ci
-  form.firstName.addEventListener('change', function () {
-    validationName(this);
-  });
+  let firstName = document.getElementById('firstName');
+  let lastName = document.getElementById('lastName');
+  let address = document.getElementById('address');
+  let city = document.getElementById('city');
+  let email = document.getElementById('email');
 
-  form.lastName.addEventListener('change', function () {
-    validationLastName(this);
-  });
-
-  form.address.addEventListener('change', function () {
-    validationAddress(this);
-  });
-
-  form.city.addEventListener('change', function () {
-    validationCity(this);
-  });
-
-  form.email.addEventListener('change', function () {
-    validationEmail(this);
-  });
-
-  // Validation firstName
-  const validationName = (firstName) => {
-    let firstNameErrorMsg = firstName.nextElementSibling;
-    if (nameRegExp.test(firstName.value)) {
-      firstNameErrorMsg.innerHTML = '';
-    }
-    else if (!nameRegExp.test(firstName.value)) {
-      firstNameErrorMsg.innerHTML = 'Des caractères saisis ne sont pas autorisés';
-    }
-  }
-
-  // Validation lastName
-  const validationLastName = (lastName) => {
-    let lastNameErrorMsg = lastName.nextElementSibling;
-    if (nameRegExp.test(lastName.value)) {
-      lastNameErrorMsg.innerHTML = '';
-    }
-    else {
-      lastNameErrorMsg.innerHTML = 'Des caractères saisis ne sont pas autorisés';
-    }
-  }
-
-  // Validation adresse
-  const validationAddress = (address) => {
-    let addressErrorMsg = address.nextElementSibling;
-    if (!addressRegExp.test(address.value)) {
-      addressErrorMsg.innerHTML = 'Merci de saisir une adresse valide';
-    }
-  }
-
-  // Validation ville
-  const validationCity = (city) => {
-    let cityErrorMsg = city.nextElementSibling;
-    if (nameRegExp.test(city.value)) {
-      cityErrorMsg.innerHTML = '';
-    }
-    else {
-      cityErrorMsg.innerHTML = 'Des caractères saisis ne sont pas autorisés';
-    }
-  }
-
-  // Validation mail
-  const validationEmail = (email) => {
-    let emailErrorMsg = email.nextElementSibling;
-    if (!mailRegExp.test(email.value)) {
-      emailErrorMsg.innerHTML = 'Merci de saisir une adresse email valide';
-    }
+  if (!nameRegExp.test(firstName.value) || firstName.value.length === 0) {
+    firstName.nextElementSibling.innerHTML = 'Merci de saisir une prénom valide';
+    firstName.style.border = "solid red 1px"
+  } else if (!nameRegExp.test(lastName.value) || lastName.value.length === 0) {
+    lastName.nextElementSibling.innerHTML = 'Merci de saisir un nom valide';
+    firstName.style.border = "solid red 1px"
+  } else if (!addressRegExp.test(address.value) || address.value.length === 0) {
+    address.nextElementSibling.innerHTML = 'Merci de saisir une adresse valide';
+    address.style.border = "solid red 1px";
+  } else if (!nameRegExp.test(city.value) || city.value.length === 0) {
+    city.nextElementSibling.innerHTML = 'Merci de saisir une ville valide';
+    city.style.border = "solid red 1px";
+  } else if (!mailRegExp.test(email.value) || email.value.length === 0) {
+    email.nextElementSibling.innerHTML = 'Merci de saisir une adresse mail valide';
+    email.style.border = "solid red 1px";
+  } else {
+    sentForm();
   }
 }
-getForm();
 
-function sentForm() {
-  document.getElementById("order").addEventListener('click', (result) => {
-    // result.preventDefault();
+const sentForm = () => {
+  // Récupération des id qu'on ajoute dans le tableau products
+  let products = [];
+  for (i = 0; i < displayBasket.length; i++) {
+    products.push(displayBasket[i].id);
+  }
 
-    // Récupération des id qu'on ajoute dans le tableau products
-    let products = [];
-    for (i = 0; i < displayBasket.length; i++) {
-      products.push(displayBasket[i].id);
-    }
-
-    // Création d'un objet order contenant un objet contact et le tableau product
-    const order = {
-      contact: {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName'),
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        email: document.getElementById('email').value
-      },
-      products: products,
-    }
-
-    fetch('http://localhost:3000/api/products/order', {
-      method: 'POST',
-      body: JSON.stringify(order),
-      headers: {
-        'Accept': 'application/json',
-        "Content-Type": "application/json"
-      },
-    })
-      .then((response) => response.json())
-      .then(data => {
-        // localStorage.clear();
-        document.location.href = 'confirmation.html?id=' + data.orderId;
-      })
-      .catch(error => {
-        console.log(error);
-      });
+  // Création d'un objet order contenant un objet contact et le tableau product
+  const order = {
+    contact: {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      address: address.value,
+      city: city.value,
+      email: email.value
+    },
+    products: products,
+  }
+  // Connexion à l'API et envoi des données
+  fetch('http://localhost:3000/api/products/order', {
+    method: 'POST',
+    body: JSON.stringify(order),
+    headers: {
+      'Accept': 'application/json',
+      "Content-Type": "application/json"
+    },
   })
+    .then((response) => response.json())
+    .then(data => {
+      localStorage.clear();
+      document.location.href = 'confirmation.html?id=' + data.orderId;
+    })
+    .catch(error => {
+      console.log(error);
+    });
+
 };
-sentForm();
+
+// Au clic, on valide le formulaire puis on envoie
+document.getElementById("order").addEventListener('click', (result) => {
+  result.preventDefault();
+  validationForm();
+});
+
+
 
 
 // On affiche la quantité de produits dans le panier dans la navigation
-// let basketQuantity = JSON.parse(localStorage.getItem("product"));
-// document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
+let basketQuantity = JSON.parse(localStorage.getItem("product"));
+if (basketQuantity.length > 0) {
+  document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
+}

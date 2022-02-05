@@ -121,4 +121,6 @@ function addToCart() {
 
 // On affiche la quantité de produits dans le panier dans la navigation
 let basketQuantity = JSON.parse(localStorage.getItem("product"));
-document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
+if (basketQuantity.length > 0) {
+    document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
+}
