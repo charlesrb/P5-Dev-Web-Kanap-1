@@ -1,7 +1,6 @@
 // On récupère le panier depuis le localStorage
 let basket = localStorage.getItem("product");
 let displayBasket = JSON.parse(basket);
-
 function getBasket() {
   // Si il est vide, on affichage que le panier est vide
   if (basket == null) {
@@ -192,7 +191,49 @@ function getForm() {
 }
 getForm();
 
+function sentForm() {
+  document.getElementById("order").addEventListener('click', (result) => {
+    // result.preventDefault();
+
+    // Récupération des id qu'on ajoute dans le tableau products
+    let products = [];
+    for (i = 0; i < displayBasket.length; i++) {
+      products.push(displayBasket[i].id);
+    }
+
+    // Création d'un objet order contenant un objet contact et le tableau product
+    const order = {
+      contact: {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName'),
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        email: document.getElementById('email').value
+      },
+      products: products,
+    }
+
+    fetch('http://localhost:3000/api/products/order', {
+      method: 'POST',
+      body: JSON.stringify(order),
+      headers: {
+        'Accept': 'application/json',
+        "Content-Type": "application/json"
+      },
+    })
+      .then((response) => response.json())
+      .then(data => {
+        // localStorage.clear();
+        document.location.href = 'confirmation.html?id=' + data.orderId;
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  })
+};
+sentForm();
+
 
 // On affiche la quantité de produits dans le panier dans la navigation
-let basketQuantity = JSON.parse(localStorage.getItem("product"));
-document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
+// let basketQuantity = JSON.parse(localStorage.getItem("product"));
+// document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
