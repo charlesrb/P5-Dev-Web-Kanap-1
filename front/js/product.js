@@ -5,9 +5,11 @@
 function checkUrl() {
     let url = new URL(window.location.href);
 
+    // Si l'URL contien le paramètre id, on recupère le paramètre dans une variable
     if (url.search.includes('id')) {
         return itemId = url.searchParams.get('id');
     }
+    // Sinon, on indique à l'utilisateur qu'il n'a pas sélectionné d'article
     else {
         return window.confirm("Désolé, vous n'avez pas sélectionné d'article");
     }
@@ -19,10 +21,9 @@ checkUrl();
 // ============================== //
 
 // On récupère le produit via l'API et on l'affiche dans le DOM
-async function getProducts() {
-    let reponse = await fetch(`http://localhost:3000/api/products/${itemId}`)
-    // On vérifie que la connexion à l'API est ok
-    if (reponse.ok) {
+async function getProduct() {
+    try {
+        let reponse = await fetch(`http://localhost:3000/api/products/${itemId}`)
         let data = await reponse.json();
         document.title = data.name;
         document.querySelector(".item__img").innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
@@ -32,14 +33,16 @@ async function getProducts() {
         for (color of data.colors) {
             document.getElementById("colors").innerHTML += `<option value="${color}">${color}</option>`;
         }
-        addToCart();
+        
     }
-    // Sinon on indique qu'il y a un problème de communication
-    else {
-        window.confirm("Désolé, il y a une erreur de communication avec l'API")
+    // Sinon on récupère l'erreur et on indique qu'il y a un problème de communication
+    catch (error) {
+        console.log("Error :" + error)
+        let items = document.getElementById("items");
+        items.innerHTML = "<h3>Désolé, il y a une erreur de communication avec l'API, veuillez rééssayer plus tard</h3>";
     }
 };
-getProducts();
+getProduct();
 
 // ---- AJOUT AU PANIER ----- //
 // ============================== //
@@ -118,9 +121,4 @@ function addToCart() {
 
     });
 }
-
-// On affiche la quantité de produits dans le panier dans la navigation
-let basketQuantity = JSON.parse(localStorage.getItem("product"));
-if (basketQuantity.length > 0) {
-    document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
-}
+addToCart();

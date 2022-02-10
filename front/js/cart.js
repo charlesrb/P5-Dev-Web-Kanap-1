@@ -111,37 +111,106 @@ function deleteProduct() {
 }
 deleteProduct();
 
-// Fonction validation des champs de formulaire
-const validationForm = () => {
-  let nameRegExp = new RegExp("^[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*$");
-  let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
-  let mailRegExp = new RegExp("[-a-zA-Zàâäéèêëïîôöùûüç]+@[a-z0-9.-]+\.[a-z]{2,}$");
+// Validation des différents champs de formulaire
 
-  let firstName = document.getElementById('firstName');
-  let lastName = document.getElementById('lastName');
-  let address = document.getElementById('address');
-  let city = document.getElementById('city');
-  let email = document.getElementById('email');
+// Définition des variables
+let firstName = document.getElementById('firstName');
+let lastName = document.getElementById('lastName');
+let address = document.getElementById('address');
+let city = document.getElementById('city');
+let email = document.getElementById('email');
+let nameRegExp = new RegExp("^[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*$");
+let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
+let mailRegExp = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
 
+// Fonctions des différents champs. Si cela ne correspond pas au RegExp ou que le champ est vide, le message d'erreur s'affiche en perdant le focus. 
+// Validation du prénom
+const validationFirstName = () => {
   if (!nameRegExp.test(firstName.value) || firstName.value.length === 0) {
-    firstName.nextElementSibling.innerHTML = 'Merci de saisir une prénom valide';
+    firstName.nextElementSibling.innerHTML = 'Merci de saisir un prénom valide comprenant que des lettres';
     firstName.style.border = "solid red 1px"
-  } else if (!nameRegExp.test(lastName.value) || lastName.value.length === 0) {
-    lastName.nextElementSibling.innerHTML = 'Merci de saisir un nom valide';
-    firstName.style.border = "solid red 1px"
-  } else if (!addressRegExp.test(address.value) || address.value.length === 0) {
-    address.nextElementSibling.innerHTML = 'Merci de saisir une adresse valide';
-    address.style.border = "solid red 1px";
-  } else if (!nameRegExp.test(city.value) || city.value.length === 0) {
-    city.nextElementSibling.innerHTML = 'Merci de saisir une ville valide';
-    city.style.border = "solid red 1px";
-  } else if (!mailRegExp.test(email.value) || email.value.length === 0) {
-    email.nextElementSibling.innerHTML = 'Merci de saisir une adresse mail valide';
-    email.style.border = "solid red 1px";
-  } else {
+    return false;
+}
+else {
+  firstName.nextElementSibling.innerHTML = '';
+  firstName.style.border = "none";
+  return true;
+}
+}
+
+// Validation du nom
+const validationLastName = () => {
+  if (!nameRegExp.test(lastName.value) || lastName.value.length === 0) {
+    lastName.nextElementSibling.innerHTML = 'Merci de saisir un nom valide comprenant que des lettres';
+    lastName.style.border = "solid red 1px"
+    return false;
+}
+else {
+  lastName.nextElementSibling.innerHTML = '';
+  lastName.style.border = "none";
+  return true;
+}
+}
+
+// Validation de l'adresse
+const validationAddress = () => {
+  if (!addressRegExp.test(address.value) || address.value.length === 0) {
+    address.nextElementSibling.innerHTML = 'Merci de saisir une adresse valide (exemple : 23 allée des hirondelles)';
+    address.style.border = "solid red 1px"
+    return false;
+}
+else {
+  address.nextElementSibling.innerHTML = '';
+  address.style.border = "none";
+  return true;
+}
+}
+
+// Validation de la ville
+const validationCity = () => {
+  if (!nameRegExp.test(city.value) || city.value.length === 0) {
+    city.nextElementSibling.innerHTML = 'Merci de saisir un nom de ville valide comprenant que des lettres';
+    city.style.border = "solid red 1px"
+    return false;
+}
+else {
+  city.nextElementSibling.innerHTML = '';
+  city.style.border = "none";
+  return true;
+}
+}
+
+// Validation de l'email
+const validationEmail = () => {
+  if (!mailRegExp.test(email.value) || email.value.length === 0) {
+    email.nextElementSibling.innerHTML = 'Merci de saisir une adresse email valide de la forme prenom@mail.com';
+    email.style.border = "solid red 1px"
+    return false;
+}
+else {
+  email.nextElementSibling.innerHTML = '';
+  email.style.border = "none";
+  return true;
+}
+}
+
+firstName.addEventListener("blur", validationFirstName);
+lastName.addEventListener("blur", validationLastName);
+address.addEventListener("blur", validationAddress);
+city.addEventListener("blur", validationCity);
+email.addEventListener("blur", validationEmail);
+
+// Vérification si toutes les validations sont ok sinon alerte de l'utilisateur
+const validationForm = () => {
+
+  if (validationFirstName() && validationLastName() && validationAddress() && validationCity() && validationEmail()) {
     sentForm();
   }
+  else {
+    alert("Merci de compléter les champs requis");
+  }
 }
+
 
 const sentForm = () => {
   // Récupération des id qu'on ajoute dans le tableau products
@@ -173,7 +242,7 @@ const sentForm = () => {
     .then((response) => response.json())
     .then(data => {
       localStorage.clear();
-      document.location.href = 'confirmation.html?id=' + data.orderId;
+      document.location.href = 'confirmation.html?orderId=' + data.orderId;
     })
     .catch(error => {
       console.log(error);
@@ -181,17 +250,8 @@ const sentForm = () => {
 
 };
 
-// Au clic, on valide le formulaire puis on envoie
+// Au clic sur le bouton, on valide le formulaire puis on envoie
 document.getElementById("order").addEventListener('click', (result) => {
   result.preventDefault();
   validationForm();
 });
-
-
-
-
-// On affiche la quantité de produits dans le panier dans la navigation
-let basketQuantity = JSON.parse(localStorage.getItem("product"));
-if (basketQuantity.length > 0) {
-  document.querySelector(".basketQuantity").innerHTML += ` <strong>(${basketQuantity.length})</strong>`;
-}

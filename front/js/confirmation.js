@@ -5,11 +5,11 @@
 function checkUrl() {
     let url = new URL(window.location.href);
 
-    if (url.search.includes('id')) {
-        return itemId = url.searchParams.get('id');
+    if (url.search.includes('orderId')) {
+        return itemId = url.searchParams.get('orderId');
     }
     else {
-        return window.confirm("Désolé, vous n'avez pas sélectionné d'article");
+        return window.confirm("Le numéro de commande n'as pas pu être généré");
     }
 }
 
