@@ -9,7 +9,7 @@ function checkUrl() {
         return itemId = url.searchParams.get('orderId');
     }
     else {
-        return window.confirm("Le numéro de commande n'as pas pu être généré");
+        return window.confirm("Le numéro de commande n'a pas pu être généré");
     }
 }
 
