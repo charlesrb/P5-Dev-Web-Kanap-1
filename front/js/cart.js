@@ -36,7 +36,7 @@ function getBasket() {
     }
   }
   getTotal();
-};
+}
 getBasket();
 
 // Calcul de la quantité totale et du prix total
@@ -49,17 +49,17 @@ function getTotal() {
     totalQuantity += quantityProduct[i].valueAsNumber;
   }
   // On modifie le DOM
-  let productTotalQuantity = document.getElementById('totalQuantity');
+  let productTotalQuantity = document.getElementById("totalQuantity");
   productTotalQuantity.innerHTML = totalQuantity;
 
   // Calcul du prix total
   totalPrice = 0;
 
   for (let i = 0; i < quantityProduct.length; ++i) {
-    totalPrice += (quantityProduct[i].valueAsNumber * displayBasket[i].price);
+    totalPrice += quantityProduct[i].valueAsNumber * displayBasket[i].price;
   }
   // On modifie le DOM
-  let productTotalPrice = document.getElementById('totalPrice');
+  let productTotalPrice = document.getElementById("totalPrice");
   productTotalPrice.innerHTML = totalPrice;
 }
 
@@ -70,7 +70,7 @@ function modifyQuantity() {
   // Boucle sur tous les produits qui existent
   for (let j = 0; j < changeQuantity.length; j++) {
     // On "écoute" les changements
-    changeQuantity[j].addEventListener('change', result => {
+    changeQuantity[j].addEventListener("change", (result) => {
       result.preventDefault();
       // on modifie la quantité et on l'ajoute au localStorage
       let newQuantity = parseInt(changeQuantity[j].valueAsNumber);
@@ -79,9 +79,8 @@ function modifyQuantity() {
 
       // Refresh pour mettre à jour quantité total et prix total
       location.reload();
-
     });
-  };
+  }
 }
 modifyQuantity();
 
@@ -90,15 +89,22 @@ function deleteProduct() {
   let deleteBtn = document.querySelectorAll(".deleteItem");
 
   for (let k = 0; k < deleteBtn.length; k++) {
-    deleteBtn[k].addEventListener('click', result => {
+    deleteBtn[k].addEventListener("click", (result) => {
       result.preventDefault();
       // On récupère l'id et la couleur du produit à supprimer
       let productIdDelete = displayBasket[k].id;
-      let productcolorDelete = displayBasket[k].color
+      let productcolorDelete = displayBasket[k].color;
       // On demande confirmation à l'utilisateur
-      if (confirm(`Etes vous sûrs de vouloir retirer le ${displayBasket[k].name} du panier ?`)) {
+      if (
+        confirm(
+          `Etes vous sûrs de vouloir retirer le ${displayBasket[k].name} du panier ?`
+        )
+      ) {
         // On récupère le panier sans l'élément à supprimer
-        displayBasket = displayBasket.filter(product => product.id != productIdDelete || product.color != productcolorDelete);
+        displayBasket = displayBasket.filter(
+          (product) =>
+            product.id != productIdDelete || product.color != productcolorDelete
+        );
         // On met à jour le panier dans le localStorage
         localStorage.setItem("product", JSON.stringify(displayBasket));
         // On rafraichit
@@ -106,7 +112,7 @@ function deleteProduct() {
         // On informe l'utilisateur de la bonne réalisation
         alert(`Le produit a bien été supprimé du panier`);
       }
-    })
+    });
   }
 }
 deleteProduct();
@@ -114,103 +120,72 @@ deleteProduct();
 // Validation des différents champs de formulaire
 
 // Définition des variables
-let firstName = document.getElementById('firstName');
-let lastName = document.getElementById('lastName');
-let address = document.getElementById('address');
-let city = document.getElementById('city');
-let email = document.getElementById('email');
-let nameRegExp = new RegExp("^[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*$");
-let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
-let mailRegExp = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
+let firstName = document.getElementById("firstName");
+let lastName = document.getElementById("lastName");
+let address = document.getElementById("address");
+let city = document.getElementById("city");
+let email = document.getElementById("email");
+let nameRegExp = new RegExp("^[A-Za-z]+((s)?(('|-|.)?([A-Za-z])+))*$");
+let addressRegExp = new RegExp(
+  "^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+"
+);
+let mailRegExp = new RegExp(
+  "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
+);
+let firstNameMessage =
+  "Merci de saisir un prénom valide comprenant que des lettres";
+let lastNameMessage =
+  "Merci de saisir un nom valide comprenant que des lettres";
+let addressMessage =
+  "Merci de saisir une adresse valide (exemple : 23 allée des hirondelles)";
+let cityMessage =
+  "Merci de saisir un nom de ville valide comprenant que des lettres";
+let emailMessage =
+  "Merci de saisir une adresse email valide de la forme prenom@mail.com";
+// Fonctions des différents champs. Si cela ne correspond pas au RegExp ou que le champ est vide, le message d'erreur s'affiche en perdant le focus.
 
-// Fonctions des différents champs. Si cela ne correspond pas au RegExp ou que le champ est vide, le message d'erreur s'affiche en perdant le focus. 
-// Validation du prénom
-const validationFirstName = () => {
-  if (!nameRegExp.test(firstName.value) || firstName.value.length === 0) {
-    firstName.nextElementSibling.innerHTML = 'Merci de saisir un prénom valide comprenant que des lettres';
-    firstName.style.border = "solid red 1px"
+const validationFormOrder = (name, message, regExp) => {
+  if (!regExp.test(name.value) || name.value.length === 0) {
+    name.nextElementSibling.innerHTML = message;
+    name.style.border = "solid red 1px";
     return false;
-}
-else {
-  firstName.nextElementSibling.innerHTML = '';
-  firstName.style.border = "none";
-  return true;
-}
-}
+  } else {
+    name.nextElementSibling.innerHTML = "";
+    name.style.border = "none";
+    return true;
+  }
+};
 
-// Validation du nom
-const validationLastName = () => {
-  if (!nameRegExp.test(lastName.value) || lastName.value.length === 0) {
-    lastName.nextElementSibling.innerHTML = 'Merci de saisir un nom valide comprenant que des lettres';
-    lastName.style.border = "solid red 1px"
-    return false;
-}
-else {
-  lastName.nextElementSibling.innerHTML = '';
-  lastName.style.border = "none";
-  return true;
-}
-}
-
-// Validation de l'adresse
-const validationAddress = () => {
-  if (!addressRegExp.test(address.value) || address.value.length === 0) {
-    address.nextElementSibling.innerHTML = 'Merci de saisir une adresse valide (exemple : 23 allée des hirondelles)';
-    address.style.border = "solid red 1px"
-    return false;
-}
-else {
-  address.nextElementSibling.innerHTML = '';
-  address.style.border = "none";
-  return true;
-}
-}
-
-// Validation de la ville
-const validationCity = () => {
-  if (!nameRegExp.test(city.value) || city.value.length === 0) {
-    city.nextElementSibling.innerHTML = 'Merci de saisir un nom de ville valide comprenant que des lettres';
-    city.style.border = "solid red 1px"
-    return false;
-}
-else {
-  city.nextElementSibling.innerHTML = '';
-  city.style.border = "none";
-  return true;
-}
-}
-
-// Validation de l'email
-const validationEmail = () => {
-  if (!mailRegExp.test(email.value) || email.value.length === 0) {
-    email.nextElementSibling.innerHTML = 'Merci de saisir une adresse email valide de la forme prenom@mail.com';
-    email.style.border = "solid red 1px"
-    return false;
-}
-else {
-  email.nextElementSibling.innerHTML = '';
-  email.style.border = "none";
-  return true;
-}
-}
-
-firstName.addEventListener("blur", validationFirstName);
-lastName.addEventListener("blur", validationLastName);
-address.addEventListener("blur", validationAddress);
-city.addEventListener("blur", validationCity);
-email.addEventListener("blur", validationEmail);
+firstName.addEventListener("blur", function () {
+  validationFormOrder(firstName, firstNameMessage, nameRegExp);
+});
+lastName.addEventListener("blur", function () {
+  validationFormOrder(lastName, lastNameMessage, nameRegExp);
+});
+address.addEventListener("blur", function () {
+  validationFormOrder(address, addressMessage, addressRegExp);
+});
+city.addEventListener("blur", function () {
+  validationFormOrder(city, cityMessage, nameRegExp);
+});
+email.addEventListener("blur", function () {
+  validationFormOrder(email, emailMessage, mailRegExp);
+});
 
 // Vérification si toutes les validations sont ok sinon alerte de l'utilisateur
 const validationForm = () => {
-
-  if (validationFirstName() && validationLastName() && validationAddress() && validationCity() && validationEmail()) {
+  if (
+    validationFormOrder(firstName, firstNameMessage, nameRegExp) &&
+    validationFormOrder(lastName, lastNameMessage, nameRegExp) &&
+    validationFormOrder(address, addressMessage, addressRegExp) &&
+    validationFormOrder(city, cityMessage, nameRegExp) &&
+    validationFormOrder(email, emailMessage, mailRegExp)
+  ) {
     sentForm();
-  }
-  else {
+  } else {
     alert("Merci de compléter les champs requis");
   }
-}
-
+};
 
 const sentForm = () => {
   // Récupération des id qu'on ajoute dans le tableau products
@@ -226,32 +201,31 @@ const sentForm = () => {
       lastName: lastName.value,
       address: address.value,
       city: city.value,
-      email: email.value
+      email: email.value,
     },
     products: products,
-  }
+  };
   // Connexion à l'API et envoi des données
-  fetch('http://localhost:3000/api/products/order', {
-    method: 'POST',
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
     body: JSON.stringify(order),
     headers: {
-      'Accept': 'application/json',
-      "Content-Type": "application/json"
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   })
     .then((response) => response.json())
-    .then(data => {
+    .then((data) => {
       localStorage.clear();
-      document.location.href = 'confirmation.html?orderId=' + data.orderId;
+      document.location.href = "confirmation.html?orderId=" + data.orderId;
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
     });
-
 };
 
 // Au clic sur le bouton, on valide le formulaire puis on envoie
-document.getElementById("order").addEventListener('click', (result) => {
+document.getElementById("order").addEventListener("click", (result) => {
   result.preventDefault();
   validationForm();
 });
